@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>AI Mental Health Support Chatbot</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+<div class="chat-wrapper">
+    <div class="top-bar">
+        <div class="brand">💜 AI Mental Health Support</div>
+        <div class="user-menu">
+            <span id="username" class="username-display"></span>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+            <a href="/dashboard" class="dashboard-link">📊 History</a>
+        </div>
+    </div>
+
+    <div class="chat-container">
+
+        <div class="chat-header">
+             AI Mental Health Support
+        </div>
+
+        <div class="chat-body" id="chatBody">
+            <div class="message bot-message">
+                <div class="msg-text">
+                    Hello 👋 I'm here to support you. How are you feeling today?
+                </div>
+            </div>
+        </div>
+
+        <div class="chat-footer">
+            <input type="text" id="userInput" placeholder="Type your message..." autocomplete="off">
+            <button onclick="sendMessage()" class="send-btn">Send</button>
+        </div>
+
+    </div>
+</div>
+
+<!-- JavaScript -->
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+<script>
+    // Check authentication on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        const token = localStorage.getItem('accessToken');
+        if (!token) {
+            window.location.href = '/login';
+            return;
+        }
+        
+        // Display username from localStorage or fetch from backend
+        const storedUsername = localStorage.getItem('username');
+        if (storedUsername) {
+            document.getElementById('username').textContent = storedUsername;
+        }
+        
+        // Check chat auth
+        checkChatAuth();
+    });
+    
+    function logout() {
+        if (confirm('Are you sure you want to logout?')) {
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('username');
+            window.location.href = '/login';
+        }
+    }
+</script>
+
+</body>
+</html>

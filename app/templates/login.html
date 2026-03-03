@@ -1,0 +1,66 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Login / Register</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+</head>
+
+<body>
+
+<div class="auth-container">
+
+    <div class="auth-box">
+        <div class="auth-icon"></div>
+        <h2>
+            {% if request.endpoint == 'main.login' %}
+                Welcome Back 👋
+            {% else %}
+                Create Account ✨
+            {% endif %}
+        </h2>
+
+        <form id="authForm">
+
+            <div class="input-group">
+                <label>Username</label>
+                <input type="text" name="username" id="username" placeholder="Enter username (min 3 chars)" required>
+            </div>
+
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" name="password" id="password" placeholder="Enter password (min 6 chars)" required>
+            </div>
+
+            <button type="submit" class="auth-btn">
+                {% if request.endpoint == 'main.login' %}
+                    Login
+                {% else %}
+                    Register
+                {% endif %}
+            </button>
+
+        </form>
+
+        <p class="switch-text">
+            {% if request.endpoint == 'main.login' %}
+                Don't have an account?
+                <a href="{{ url_for('main.register') }}">Register</a>
+            {% else %}
+                Already have an account?
+                <a href="{{ url_for('main.login') }}">Login</a>
+            {% endif %}
+        </p>
+
+    </div>
+
+</div>
+
+<!-- JavaScript -->
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+</body>
+</html>
