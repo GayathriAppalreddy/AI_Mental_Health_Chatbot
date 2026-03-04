@@ -187,11 +187,30 @@ body {
 
 .sentiment-indicator {
     margin-top: 8px;
-    padding: 6px 12px;
-    border-radius: 8px;
+    padding: 8px 16px;
+    border-radius: 20px;
     font-size: 12px;
     font-weight: 600;
     display: inline-block;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    animation: fadeInScale 0.4s ease-out;
+}
+
+.sentiment-display {
+    display: flex;
+    justify-content: center;
+    margin: 12px 0;
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
 .sentiment-positive {

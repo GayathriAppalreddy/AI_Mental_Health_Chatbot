@@ -28,6 +28,7 @@ function sendMessage() {
 
     // Clear input field
     userInput.value = "";
+    userInput.focus();
     
     // Show loading indicator
     const loadingDiv = document.createElement("div");
@@ -48,27 +49,43 @@ function sendMessage() {
     .then(response => {
         if (response.status === 401) {
             localStorage.removeItem('accessToken');
+            localStorage.removeItem('username');
             window.location.href = '/login';
             return null;
+        }
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
         return response.json();
     })
     .then(data => {
         if (!data) return;
-        loadingDiv.remove();
-        addMessage(data.reply, "bot-message");
-        if (data.sentiment) {
-            const sentimentClass = data.sentiment === 'Positive' ? 'sentiment-positive' : 'sentiment-negative';
-            const sentimentDiv = document.createElement("div");
-            sentimentDiv.className = `sentiment-indicator ${sentimentClass}`;
-            sentimentDiv.textContent = `Mood: ${data.sentiment}`;
-            chatBody.appendChild(sentimentDiv);
-            chatBody.scrollTop = chatBody.scrollHeight;
+        
+        // Remove loading indicator
+        if (loadingDiv.parentNode === chatBody) {
+            loadingDiv.remove();
         }
+        
+        // Add bot reply with slight delay for better UX
+        setTimeout(() => {
+            addMessage(data.reply, "bot-message");
+            
+            // Display sentiment indicator
+            if (data.sentiment) {
+                const sentimentClass = data.sentiment === 'Positive' ? 'sentiment-positive' : 'sentiment-negative';
+                const sentimentDiv = document.createElement("div");
+                sentimentDiv.className = `message sentiment-display`;
+                sentimentDiv.innerHTML = `<div class="sentiment-indicator ${sentimentClass}">📊 Detected Mood: ${data.sentiment}</div>`;
+                chatBody.appendChild(sentimentDiv);
+                chatBody.scrollTop = chatBody.scrollHeight;
+            }
+        }, 300);
     })
     .catch(error => {
-        loadingDiv.remove();
-        addMessage("⚠ Error connecting to server. Please check your connection.", "bot-message");
+        if (loadingDiv.parentNode === chatBody) {
+            loadingDiv.remove();
+        }
+        addMessage("⚠ Error connecting to server. Please check your connection and try again.", "bot-message");
         console.error("Error:", error);
     });
 }
@@ -82,21 +99,31 @@ function addMessage(text, className) {
     
     const msgText = document.createElement("div");
     msgText.classList.add("msg-text");
+    
+    // Handle text with simple emoji support
     msgText.textContent = text;
     
     messageDiv.appendChild(msgText);
     chatBody.appendChild(messageDiv);
 
     // Auto-scroll to bottom
-    chatBody.scrollTop = chatBody.scrollHeight;
+    setTimeout(() => {
+        chatBody.scrollTop = chatBody.scrollHeight;
+    }, 100);
 }
 
 // Send message when Enter key is pressed
 if (userInput) {
     userInput.addEventListener("keypress", function(event) {
         if (event.key === "Enter") {
+            event.preventDefault();
             sendMessage();
         }
+    });
+    
+    // Set focus on input when page loads
+    document.addEventListener("DOMContentLoaded", function() {
+        userInput.focus();
     });
 }
 
